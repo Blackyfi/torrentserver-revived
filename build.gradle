@@ -1,35 +1,22 @@
-apply plugin: 'maven-publish'
+plugins {
+    id 'maven-publish'
+}
 
 group = 'com.github.Blackyfi'
-version = '1.0.0'
+// JitPack passes -Pversion=<git-ref>; default for local builds.
+version = project.findProperty('version') ?: '1.0.0'
 
 publishing {
     publications {
         aar(MavenPublication) {
             artifactId = 'torrentserver-revived'
-            artifact("./build/$version/torrserver.aar") 
+            // Publish the prebuilt gomobile AAR committed at the repo root.
+            artifact(file('torrserver.aar')) {
+                extension = 'aar'
+            }
+            pom {
+                packaging = 'aar'
+            }
         }
     }
-
-    repositories {
-        maven {
-            url = uri("${project.buildDir}/repo")
-        }
-    }
 }
-
-
-tasks.register("assemble") {
-    group = "Custom"
-    description = "Builds the project and copies the .aar file"
-    doLast {
-        println("Building the project...")
-    }
-    finalizedBy("copyAarToVersionDir")
-}
-
-tasks.register("copyAarToVersionDir",Copy) {
-    from("torrserver.aar")
-    into("$buildDir/$version")
-}
-
