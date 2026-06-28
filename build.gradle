@@ -3,8 +3,9 @@ plugins {
 }
 
 group = 'com.github.Blackyfi'
-// JitPack passes -Pversion=<git-ref>; default for local builds.
-version = project.findProperty('version') ?: '1.0.0'
+// JitPack relocates the published artifact to the requested git ref, so this
+// internal version is irrelevant to consumers.
+version = '1.0.0'
 
 publishing {
     publications {
@@ -19,4 +20,10 @@ publishing {
             }
         }
     }
+}
+
+// JitPack invokes `assemble` before publishing; provide a no-op so that step
+// succeeds (the AAR is prebuilt, nothing to compile here).
+tasks.register('assemble') {
+    doLast { println 'Nothing to assemble; torrserver.aar is prebuilt.' }
 }
