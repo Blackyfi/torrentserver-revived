@@ -66,8 +66,11 @@ func Start() {
 
 	api.SetupRoute(&route.RouterGroup)
 
+	// Bind to loopback only: this server is for the on-device player, so it must
+	// not be reachable from other devices on the same network (would expose the
+	// torrent control API /torrents,/settings,/shutdown and the media streams).
 	httpServer = &http.Server{
-		Addr:    ":" + settings.Port,
+		Addr:    "127.0.0.1:" + settings.Port,
 		Handler: route,
 	}
 
